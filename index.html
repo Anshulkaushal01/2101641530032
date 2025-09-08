@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - React App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-header {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #2196F3, #9C27B0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .url-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .url-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .url-card h3 {
+            color: #2196F3;
+            margin-bottom: 1rem;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .input-field {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .input-field.error {
+            border-color: #f44336;
+        }
+
+        .error-text {
+            color: #f44336;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .helper-text {
+            color: #666;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 2rem auto;
+            display: block;
+            min-width: 200px;
+            box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .alert.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .alert.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .url-result {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .url-result:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .result-url {
+            flex: 1;
+        }
+
+        .original-url {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .short-url {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2196F3;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .badge.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .badge.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .expiry-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .details-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .details-btn:hover {
+            background: #1976D2;
+        }
+
+        .visit-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .visit-btn:hover {
+            background: #45a049;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .details-table th,
+        .details-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .details-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .info-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .info-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .result-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .status-badges {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+</style>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="nav-container">
+                <div class="logo">
+                    🔗 URL Shortener
+                </div>
+                <nav class="nav-buttons">
+                    <button class="nav-btn active" onclick="showPage('shortener')">Shortener</button>
+                    <button class="nav-btn" onclick="showPage('statistics')">Statistics</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- URL Shortener Page -->
+            <div id="shortener-page" class="page">
+                <div class="card">
+                    <h1 class="page-title">
+                        🔗 URL Shortener
+                    </h1>
+                    
+                    <div id="success-alert" class="alert success hidden"></div>
+                    <div id="error-alert" class="alert error hidden"></div>
+                    
+                    <p style="color: #666; margin-bottom: 2rem;">
+                        Enter up to 5 URLs to shorten simultaneously. Each URL can have custom settings.
+                    </p>
+
+                    <div class="form-grid" id="url-forms">
+                        <!-- URL forms will be generated by JavaScript -->
+                    </div>
+
+                    <button class="submit-btn" onclick="shortenUrls()">
+                        Shorten URLs
+                    </button>
+
+                    <div id="results-section" class="results-section hidden">
+                        <h2>Your Shortened URLs</h2>
+                        <div id="results-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Page -->
+            <div id="statistics-page" class="page hidden">
+                <div class="card">
+                    <h1 class="page-title">
+                        📊 URL Statistics
+                    </h1>
+                    
+                    <div id="stats-content">
+                        <!-- Statistics will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for URL Details -->
+        <div id="details-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Detailed Click Analytics</div>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div id="modal-body">
+                    <!-- Modal content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock logging middleware - implements extensive logging as required
+        const Logger = {
+            info: (message, data = {}) => {
+                console.log(`[INFO] ${new Date().toISOString()} - ${message}`, data);
+            },
+            error: (message, data = {}) => {
+                console.error(`[ERROR] ${new Date().toISOString()} - ${message}`, data);
+            },
+            warn: (message, data = {}) => {
+                console.warn(`[WARN] ${new Date().toISOString()} - ${message}`, data);
+            }
+        };
+
+        // Global state
+        let urls = [];
+        let formData = [
+            { originalUrl: '', customShortcode: '', validityPeriod: '' },
+            { originalUrl: '', customShortcode: '', validityPeriod: '' },
+            { originalUrl: '', customShortcode: '', validityPeriod: '' },
+            { originalUrl: '', customShortcode: '', validityPeriod: '' },
+            { originalUrl: '', customShortcode: '', validityPeriod: '' }
+        ];
+
+        // Initialize the application
+        function initApp() {
+            Logger.info('Application initialized');
+            generateForms();
+            showPage('shortener');
+        }
+
+        // Generate form fields for URL shortening
+        function generateForms() {
+            const container = document.getElementById('url-forms');
+            container.innerHTML = '';
+
+            formData.forEach((data, index) => {
+                const urlCard = document.createElement('div');
+                urlCard.className = 'url-card';
+                urlCard.innerHTML = `
+                    <h3>URL #${index + 1}</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="url-${index}">Original URL</label>
+                            <input 
+                                type="url" 
+                                id="url-${index}" 
+                                class="input-field" 
+                                placeholder="https://example.com/very-long-url"
+                                value="${data.originalUrl}"
+                                oninput="updateFormData(${index}, 'originalUrl', this.value)"
+                            >
+                            <div id="url-error-${index}" class="error-text hidden"></div>
+                            <div class="helper-text">Enter the full URL (including http:// or https://)</div>
+                        </div>
+                        <div class="input-group">
+                            <label for="shortcode-${index}">Custom Shortcode (Optional)</label>
+                            <input 
+                                type="text" 
+                                id="shortcode-${index}" 
+                                class="input-field" 
+                                placeholder="mycode"
+                                value="${data.customShortcode}"
+                                oninput="updateFormData(${index}, 'customShortcode', this.value)"
+                            >
+                            <div id="shortcode-error-${index}" class="error-text hidden"></div>
+                            <div class="helper-text">3-10 alphanumeric characters</div>
+                        </div>
+                        <div class="input-group">
+                            <label for="validity-${index}">Validity Period (Minutes)</label>
+                            <input 
+                                type="number" 
+                                id="validity-${index}" 
+                                class="input-field" 
+                                placeholder="30"
+                                value="${data.validityPeriod}"
+                                oninput="updateFormData(${index}, 'validityPeriod', this.value)"
+                            >
+                            <div id="validity-error-${index}" class="error-text hidden"></div>
+                            <div class="helper-text">Default: 30 minutes</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(urlCard);
+            });
+        }
+
+        // Update form data
+        function updateFormData(index, field, value) {
+            formData[index][field] = value;
+            clearError(field, index);
+        }
+
+        // Clear specific error
+        function clearError(field, index) {
+            const errorElement = document.getElementById(`${field}-error-${index}`);
+            const inputElement = document.getElementById(`${field}-${index}`);
+            if (errorElement) {
+                errorElement.classList.add('hidden');
+                inputElement.classList.remove('error');
+            }
+        }
+
+        // Generate random shortcode
+        function generateShortcode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Validate URL format
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        // Validate shortcode
+        function isValidShortcode(shortcode) {
+            const regex = /^[a-zA-Z0-9]+$/;
+            return regex.test(shortcode) && shortcode.length >= 3 && shortcode.length <= 10;
+        }
+
+        // Check if shortcode is unique
+        function isUniqueShortcode(shortcode) {
+            return !urls.some(url => url.shortcode === shortcode);
+        }
+
+        // Validate form data
+        function validateForm() {
+            let hasErrors = false;
+            let hasValidData = false;
+
+            formData.forEach((data, index) => {
+                if (data.originalUrl.trim()) {
+                    hasValidData = true;
+                    
+                    // Validate URL
+                    if (!isValidUrl(data.originalUrl)) {
+                        showError('url', index, 'Please enter a valid URL');
+                        hasErrors = true;
+                    }
+
+                    // Validate custom shortcode if provided
+                    if (data.customShortcode.trim()) {
+                        if (!isValidShortcode(data.customShortcode)) {
+                            showError('shortcode', index, 'Shortcode must be 3-10 alphanumeric characters');
+                            hasErrors = true;
+                        } else if (!isUniqueShortcode(data.customShortcode)) {
+                            showError('shortcode', index, 'Shortcode already exists');
+                            hasErrors = true;
+                        }
+                    }
+
+                    // Validate validity period if provided
+                    if (data.validityPeriod.trim()) {
+                        const period = parseInt(data.validityPeriod);
+                        if (isNaN(period) || period <= 0) {
+                            showError('validity', index, 'Please enter a valid number of minutes');
+                            hasErrors = true;
+                        }
+                    }
+                }
+            });
+
+            if (!hasValidData) {
+                showAlert('error', 'Please enter at least one URL to shorten');
+                hasErrors = true;
+            }
+
+            return !hasErrors;
+        }
+
+        // Show specific field error
+        function showError(field, index, message) {
+            const errorElement = document.getElementById(`${field}-error-${index}`);
+            const inputElement = document.getElementById(`${field}-${index}`);
+            if (errorElement && inputElement) {
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+                inputElement.classList.add('error');
+            }
+        }
+
+        // Show alert message
+        function showAlert(type, message) {
+            const alertElement = document.getElementById(`${type}-alert`);
+            if (alertElement) {
+                alertElement.textContent = message;
+                alertElement.classList.remove('hidden');
+                alertElement.classList.add('fade-in');
+                
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertElement.classList.add('hidden');
+                    }, 5000);
+                }
+            }
+        }
+
+        // Hide alerts
+        function hideAlerts() {
+            document.getElementById('success-alert').classList.add('hidden');
+            document.getElementById('error-alert').classList.add('hidden');
+        }
+
+        // Generate mock click data
+        function generateMockClickData() {
+            const clicks = [];
+            const sources = ['Direct', 'Facebook', 'Twitter', 'Google', 'Email'];
+            const locations = ['New York, US', 'London, UK', 'Mumbai, IN', 'Tokyo, JP', 'Sydney, AU'];
+            
+            for (let i = 0; i < Math.floor(Math.random() * 20) + 1; i++) {
+                clicks.push({
+                    timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+                    source: sources[Math.floor(Math.random() * sources.length)],
+                    location: locations[Math.floor(Math.random() * locations.length)]
+                });
+            }
+            return clicks.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        // Shorten URLs
+        function shortenUrls() {
+            Logger.info('Starting URL shortening process');
+            hideAlerts();
+
+            if (!validateForm()) {
+                Logger.error('Form validation failed');
+                return;
+            }
+
+            const newUrls = [];
+            const now = new Date();
+
+            formData.forEach((data, index) => {
+                if (data.originalUrl.trim()) {
+                    const shortcode = data.customShortcode.trim() || generateShortcode();
+                    const validityMinutes = data.validityPeriod ? parseInt(data.validityPeriod) : 30;
+                    const expiryDate = new Date(now.getTime() + validityMinutes * 60000);
+
+                    const newUrl = {
+                        id: Date.now() + index,
+                        originalUrl: data.originalUrl.trim(),
+                        shortcode: shortcode,
+                        shortUrl: `http://localhost:3000/${shortcode}`,
+                        createdAt: now,
+                        expiryDate: expiryDate,
+                        validityMinutes: validityMinutes,
+                        clicks: Math.floor(Math.random() * 50),
+                        clickData: generateMockClickData()
+                    };
+
+                    newUrls.push(newUrl);
+                    Logger.info(`URL shortened successfully`, {
+                        original: newUrl.originalUrl,
+                        shortcode: newUrl.shortcode,
+                        expiry: newUrl.expiryDate
+                    });
+                }
+            });
+
+            urls = [...urls, ...newUrls];
+            showAlert('success', `Successfully created ${newUrls.length} shortened URL${newUrls.length > 1 ? 's' : ''}!`);
+            
+            // Reset form
+            formData = [
+                { originalUrl: '', customShortcode: '', validityPeriod: '' },
+                { originalUrl: '', customShortcode: '', validityPeriod: '' },
+                { originalUrl: '', customShortcode: '', validityPeriod: '' },
+                { originalUrl: '', customShortcode: '', validityPeriod: '' },
+                { originalUrl: '', customShortcode: '', validityPeriod: '' }
+            ];
+            generateForms();
+            
+            // Show results
+            displayResults();
+        }
+
+        // Display shortened URL results
+        function displayResults() {
+            const resultsSection = document.getElementById('results-section');
+            const resultsContainer = document.getElementById('results-container');
+            
+            if (urls.length > 0) {
+                resultsSection.classList.remove('hidden');
+                resultsContainer.innerHTML = '';
+
+                const recentUrls = urls.slice(-5);
+                recentUrls.forEach(url => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'url-result fade-in';
+                    resultDiv.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-url">
+                                <div class="original-url">Original: ${url.originalUrl}</div>
+                                <div class="short-url">
+                                    ${url.shortUrl}
+                                    <button class="copy-btn" onclick="copyToClipboard('${url.shortUrl}')" title="Copy to clipboard">
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="status-badges">
+                                ${isExpired(url) 
+                                    ? '<span class="badge error">❌ Expired</span>' 
+                                    : '<span class="badge success">✅ Active</span>'
+                                }
+                                <span class="badge info">👁️ ${url.clicks} clicks</span>
+                            </div>
+                        </div>
+                        <div class="expiry-info">
+                            ⏰ Expires: ${url.expiryDate.toLocaleString()}
+                        </div>
+                    `;
+                    resultsContainer.appendChild(resultDiv);
+                });
+            }
+        }
+
+        // Check if URL is expired
+        function isExpired(url) {
+            return new Date() > new Date(url.expiryDate);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    Logger.info('URL copied to clipboard', { url: text });
+                    // Visual feedback
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = '✅';
+                    button.classList.add('pulse');
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('pulse');
+                    }, 1000);
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                Logger.info('URL copied to clipboard (fallback)', { url: text });
+            }
+        }
+
+        // Handle URL redirection (client-side routing simulation)
+        function handleRedirect(url) {
+            Logger.info('Redirecting to original URL', {
+                shortcode: url.shortcode,
+                originalUrl: url.originalUrl,
+                timestamp: new Date()
+            });
+            
+            // Simulate click tracking
+            url.clicks++;
+            url.clickData.unshift({
+                timestamp: new Date(),
+                source: 'Direct',
+                location: 'Current Session'
+            });
+            
+            // In a real app, this would be handled by the router
+            window.open(url.originalUrl, '_blank');
+        }
+
+        // Show page
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(`${pageName}-page`).classList.remove('hidden');
+            event.target.classList.add('active');
+            
+            if (pageName === 'statistics') {
+                displayStatistics();
+            }
+            
+            Logger.info(`Navigated to ${pageName} page`);
+        }
+
+        // Display statistics page
+        function displayStatistics() {
+            const statsContent = document.getElementById('stats-content');
+            
+            if (urls.length === 0) {
+                statsContent.innerHTML = `
+                    <div class="alert info">
+                        ℹ️ No shortened URLs found. Create some URLs first to see statistics here.
+                    </div>
+                `;
+                return;
+            }
+
+            statsContent.innerHTML = '';
+            
+            urls.forEach(url => {
+                const statDiv = document.createElement('div');
+                statDiv.className = 'url-result fade-in';
+                statDiv.innerHTML = `
+                    <div class="result-header">
+                        <div class="result-url">
+                            <div class="short-url">
+                                ${url.shortUrl}
+                                <button class="copy-btn" onclick="copyToClipboard('${url.shortUrl}')" title="Copy to clipboard">
+                                    📋
+                                </button>
+                                <button class="visit-btn" onclick="handleRedirect(urls.find(u => u.id === ${url.id}))">
+                                    Visit
+                                </button>
+                            </div>
+                            <div class="original-url">Original: ${url.originalUrl}</div>
+                        </div>
+                        <div class="status-badges">
+                            ${isExpired(url) 
+                                ? '<span class="badge error">❌ Expired</span>' 
+                                : '<span class="badge success">✅ Active</span>'
+                            }
+                            <button class="details-btn" onclick="showDetails(${url.id})">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">${url.clicks}</div>
+                            <div class="stat-label">Total Clicks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${url.createdAt.toLocaleDateString()}</div>
+                            <div class="stat-label">Created</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${url.expiryDate.toLocaleDateString()}</div>
+                            <div class="stat-label">Expires</div>
+                        </div>
+                    </div>
+                `;
+                statsContent.appendChild(statDiv);
+            });
+        }
+
+        // Show detailed analytics
+        function showDetails(urlId) {
+            const url = urls.find(u => u.id === urlId);
+            if (!url) return;
+
+            const modal = document.getElementById('details-modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <h3>URL Information</h3>
+                <ul class="info-list">
+                    <li><span class="info-label">Short URL:</span> <span class="info-value">${url.shortUrl}</span></li>
+                    <li><span class="info-label">Original URL:</span> <span class="info-value">${url.originalUrl}</span></li>
+                    <li><span class="info-label">Created:</span> <span class="info-value">${url.createdAt.toLocaleString()}</span></li>
+                    <li><span class="info-label">Expires:</span> <span class="info-value">${url.expiryDate.toLocaleString()}</span></li>
+                    <li><span class="info-label">Total Clicks:</span> <span class="info-value">${url.clicks}</span></li>
+                </ul>
+
+                <h3>Click Details</h3>
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Source</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${url.clickData.slice(0, 10).map(click => `
+                            <tr>
+                                <td>${click.timestamp.toLocaleString()}</td>
+                                <td>${click.source}</td>
+                                <td>📍 ${click.location}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${url.clickData.length > 10 ? 
+                    `<p style="text-align: center; color: #666; margin-top: 1rem;">
+                        Showing first 10 of ${url.clickData.length} clicks
+                    </p>` : ''
+                }
+            `;
+            
+            modal.classList.add('active');
+            Logger.info('Displayed detailed analytics', { urlId: url.id });
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('details-modal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('details-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('details-modal')) {
+                closeModal();
+            }
+        });
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
